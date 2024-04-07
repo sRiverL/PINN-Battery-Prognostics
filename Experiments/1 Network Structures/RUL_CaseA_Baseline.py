@@ -18,6 +18,7 @@ num_neurons = [8, 16, 32, 64, 128]
 addr = '..\\..\\SeversonBattery.mat'
 data = func.SeversonBattery(addr, seq_len=seq_len)
 
+# 存储不同网络结构下的统计信息
 metric_mean = dict()
 metric_std = dict()
 metric_mean['train'] = np.zeros((len(num_layers), len(num_neurons)))
@@ -26,6 +27,8 @@ metric_mean['test'] = np.zeros((len(num_layers), len(num_neurons)))
 metric_std['train'] = np.zeros((len(num_layers), len(num_neurons)))
 metric_std['val'] = np.zeros((len(num_layers), len(num_neurons)))
 metric_std['test'] = np.zeros((len(num_layers), len(num_neurons)))
+
+# 遍历不同层数的不同神经元个数
 for l, num_l in enumerate(num_layers):
     for n, num_n in enumerate(num_neurons):
         layers = num_l * [num_n]
