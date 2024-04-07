@@ -28,8 +28,7 @@ class SeversonBattery:
         self.idx_val_units = self.data['test_ind'].flatten() - 1
         self.idx_test_units = self.data['secondary_test_ind'].flatten() - 1
 
-        # np.hstack 按水平方向堆叠数组
-        self.inputs = np.hstack((self.features, self.cycles.flatten()[:, None]))
+        self.inputs = np.hstack((self.features, self.cycles.flatten()[:, None]))  # np.hstack 按水平方向堆叠数组
         self.targets = np.hstack((self.PCL, self.RUL))
         self.inputs_dim = self.inputs.shape[1]
         self.targets_dim = self.targets.shape[1]
@@ -37,14 +36,13 @@ class SeversonBattery:
         self.num_cycles_all = self.data['Num_Cycles_Flt'].flatten()
         self.num_cells = len(self.num_cycles_all)
 
-        # 划分数据
-        # np.squeeze 删除长度为1的轴  例如shape=(1, 4, 1),则删除轴0，2
+        # 划分数据索引
         self.inputs_units, self.targets_units = create_units(
             data=self.features,
             t=self.cycles,
             RUL=self.targets,
             num_units=self.num_cells,
-            len_units=np.squeeze(self.num_cycles_all[:, None])
+            len_units=np.squeeze(self.num_cycles_all[:, None])  # np.squeeze 删除长度为1的轴  例如shape=(1, 4, 1),则删除轴0，2
         )
 
         self.num_train_units = len(self.idx_train_units)
@@ -258,7 +256,7 @@ def create_chosen_cells(data, idx_cells_train, idx_cells_test, perc_val):
 
 
 def standardize_tensor(data, mode, mean=0, std=1):
-    """"""
+    """StandardScaler/z-score"""
     data_2D = data.contiguous().view((-1, data.shape[-1]))  # 转为2D
     if mode == 'fit':
         mean = torch.mean(data_2D, dim=0)
@@ -269,6 +267,7 @@ def standardize_tensor(data, mode, mean=0, std=1):
 
 
 def inverse_standardize_tensor(data_norm, mean, std):
+    """还原StandardScaler/z-score"""
     data_norm_2D = data_norm.contiguous().view((-1, data_norm.shape[-1]))  # 转为2D
     data_2D = data_norm_2D * std + mean
     data = data_2D.contiguous().view((-1, data_norm.shape[-2], data_norm.shape[-1]))
