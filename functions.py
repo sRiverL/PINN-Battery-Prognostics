@@ -7,7 +7,13 @@ from torch.utils.data import Dataset
 
 
 class SeversonBattery:
+    """数据集处理"""
     def __init__(self, data_addr, seq_len):
+        """
+        data_addr: .mat文件地址
+        seq_len: 
+        """
+        # scipy.io.loadmat 读取.mat文件
         self.data = scipy.io.loadmat(data_addr)
         self.seq_len = seq_len
         self.steps_slices = 1
@@ -17,10 +23,12 @@ class SeversonBattery:
         self.PCL = self.data['PCL_Flt']
         self.cycles = self.data['Cycles_Flt']
 
+        # 提取数据集的索引，索引从0开始
         self.idx_train_units = self.data['train_ind'].flatten() - 1
         self.idx_val_units = self.data['test_ind'].flatten() - 1
         self.idx_test_units = self.data['secondary_test_ind'].flatten() - 1
 
+        # np.hstack 按水平方向堆叠数组
         self.inputs = np.hstack((self.features, self.cycles.flatten()[:, None]))
         self.targets = np.hstack((self.PCL, self.RUL))
         self.inputs_dim = self.inputs.shape[1]
@@ -29,6 +37,8 @@ class SeversonBattery:
         self.num_cycles_all = self.data['Num_Cycles_Flt'].flatten()
         self.num_cells = len(self.num_cycles_all)
 
+        # 划分数据
+        # np.squeeze 删除长度为1的轴  例如shape=(1, 4, 1),则删除轴0，2
         self.inputs_units, self.targets_units = create_units(
             data=self.features,
             t=self.cycles,
@@ -48,6 +58,7 @@ class SeversonBattery:
         self.inputs_test_units = []
         self.targets_test_units = []
 
+        # 根据数据集索引取出对应数据
         for i in range(self.num_train_units):
             self.inputs_train_units.append(self.inputs_units[self.idx_train_units[i]])
             self.targets_train_units.append(self.targets_units[self.idx_train_units[i]])
@@ -123,6 +134,9 @@ class SeversonBattery:
 
 
 def create_units(data, t, RUL, num_units, len_units):
+    """
+    按照len_units将数据划分为多份，放进data_list和RUL_list
+    """
     data_all = np.hstack((data, t.flatten()[:, None]))
     RUL_all = RUL
 
@@ -140,6 +154,9 @@ def create_units(data, t, RUL, num_units, len_units):
 
 
 def create_slices(data_units, RUL_units, seq_len_slices, steps_slices):
+    """
+    
+    """
     data_slices = []
     RUL_slices = []
     num_slices = np.zeros(len(data_units), dtype=np.int)
@@ -162,6 +179,9 @@ def create_slices(data_units, RUL_units, seq_len_slices, steps_slices):
 
 
 def create_chosen_cells(data, idx_cells_train, idx_cells_test, perc_val):
+    """
+    
+    """
     inputs_train_slices = []
     inputs_val_slices = []
     inputs_test_slices = []
@@ -238,6 +258,7 @@ def create_chosen_cells(data, idx_cells_train, idx_cells_test, perc_val):
 
 
 def standardize_tensor(data, mode, mean=0, std=1):
+    """"""
     data_2D = data.contiguous().view((-1, data.shape[-1]))  # 转为2D
     if mode == 'fit':
         mean = torch.mean(data_2D, dim=0)
@@ -255,15 +276,18 @@ def inverse_standardize_tensor(data_norm, mean, std):
 
 
 def Verhulst(y, r, K, C):
+    """Verhulst模型"""
     return r * (y - C) * (1 - (y - C) / (K - C))
 
 
 class Sin(nn.Module):
+    """输入x,返回sin(x)"""
     def forward(self, input):
         return torch.sin(input)
 
 
 class Neural_Net(nn.Module):
+    """神经网络"""
     def __init__(self, seq_len, inputs_dim, outputs_dim, layers, activation='Tanh'):
         super(Neural_Net, self).__init__()
 
@@ -281,6 +305,7 @@ class Neural_Net(nn.Module):
             self.layers.append(Sin())
         self.layers.append(nn.Dropout(p=0.2))
 
+        # 根据列表layer搭建MLP，包括激活层和Dropout层，并且对每一层进行xavier初始化
         for l in range(len(layers) - 1):
             self.layers.append(nn.Linear(in_features=layers[l], out_features=layers[l + 1]))
             nn.init.xavier_normal_(self.layers[-1].weight)
@@ -291,6 +316,7 @@ class Neural_Net(nn.Module):
                 self.layers.append(Sin())
             self.layers.append(nn.Dropout(p=0.2))
 
+        # 隐藏层到输出层，并xavier初始化
         self.layers.append(nn.Linear(in_features=layers[l + 1], out_features=outputs_dim))
         nn.init.xavier_normal_(self.layers[-1].weight)
 
@@ -299,6 +325,7 @@ class Neural_Net(nn.Module):
     def forward(self, x):
         self.x = x
         self.x.requires_grad_(True)
+        # contiguous深拷贝tensor，行向量变列向量
         self.x_2D = self.x.contiguous().view((-1, self.inputs_dim))
         NN_out_2D = self.NN(self.x_2D)
         self.u_pred = NN_out_2D.contiguous().view((-1, self.seq_len, self.outputs_dim))
@@ -307,6 +334,9 @@ class Neural_Net(nn.Module):
 
 
 class DataDrivenNN(nn.Module):
+    """
+    纯数据驱动
+    """
     def __init__(self, seq_len, inputs_dim, outputs_dim, layers, scaler_inputs, scaler_targets):
         super(DataDrivenNN, self).__init__()
         self.seq_len, self.inputs_dim, self.outputs_dim = seq_len, inputs_dim, outputs_dim
@@ -351,6 +381,9 @@ class DataDrivenNN(nn.Module):
 
 
 class VerhulstPINN(nn.Module):
+    """
+    Verhulst驱动
+    """
     def __init__(self, seq_len, inputs_dim, outputs_dim, layers, scaler_inputs, scaler_targets):
         super(VerhulstPINN, self).__init__()
         self.seq_len, self.inputs_dim, self.outputs_dim = seq_len, inputs_dim, outputs_dim
@@ -425,6 +458,9 @@ class VerhulstPINN(nn.Module):
 
 
 class DeepHPMNN(nn.Module):
+    """
+    DeepHPM驱动
+    """
     def __init__(self, seq_len, inputs_dim, outputs_dim, layers, scaler_inputs, scaler_targets,
                  inputs_dynamical, inputs_dim_dynamical):
         super(DeepHPMNN, self).__init__()
@@ -518,7 +554,14 @@ class TensorDataset(Dataset):
 
 
 class My_loss(nn.Module):
+    """损失函数模块"""
     def __init__(self, mode):
+        """
+        三种模式：
+        'Baseline':基础模型
+        'Sum'：求和
+        'AdpBal'：自适应权重
+        """
         super().__init__()
         self.mode = mode
 
@@ -547,6 +590,7 @@ class My_loss(nn.Module):
 
 def train(num_epoch, batch_size, train_loader, num_slices_train, inputs_val, targets_val,
           model, optimizer, scheduler, criterion, log_sigma_u, log_sigma_f, log_sigma_f_t):
+    """训练模型，返回训练好的模型和统计信息"""
     num_period = int(num_slices_train / batch_size)
     results_epoch = dict()
     results_epoch['loss_train'] = torch.zeros(num_epoch)
