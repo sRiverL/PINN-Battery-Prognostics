@@ -14,6 +14,8 @@ batch_size = settings['batch_size']
 num_epoch = settings['num_epoch']
 num_layers = settings['num_layers']
 num_neurons = settings['num_neurons']
+
+# 不同的输入配置
 inputs_lib_dynamical = [
     's_norm',
     't_norm',

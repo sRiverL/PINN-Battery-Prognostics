@@ -6,8 +6,8 @@ import functions as func
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-settings = torch.load('..\\Settings\\settings_RUL_CaseA.pth')
-seq_len = 1
+settings = torch.load('../Settings/settings_RUL_CaseA.pth')
+seq_len = 1  # 网络输出的轴1长度
 perc_val = 0.2
 num_rounds = settings['num_rounds']
 batch_size = settings['batch_size']
@@ -15,7 +15,7 @@ num_epoch = settings['num_epoch']
 num_layers = [2, 4, 6, 8, 10]
 num_neurons = [8, 16, 32, 64, 128]
 
-addr = '..\\..\\SeversonBattery.mat'
+addr = '../../SeversonBattery.mat'
 data = func.SeversonBattery(addr, seq_len=seq_len)
 
 # 存储不同网络结构下的统计信息
@@ -122,7 +122,7 @@ for l, num_l in enumerate(num_layers):
         metric_std['train'][l, n] = np.std(metric_rounds['train'])
         metric_std['val'][l, n] = np.std(metric_rounds['val'])
         metric_std['test'][l, n] = np.std(metric_rounds['test'])
-        torch.save(metric_mean, '..\\..\\Results\\1 Network Structures\\metric_mean_RUL_CaseA_Baseline.pth')
-        torch.save(metric_std, '..\\..\\Results\\1 Network Structures\\metric_std_RUL_CaseA_Baseline.pth')
+        torch.save(metric_mean, '../../Results/1 Network Structures/metric_mean_RUL_CaseA_Baseline.pth')
+        torch.save(metric_std, '../../Results/1 Network Structures/metric_std_RUL_CaseA_Baseline.pth')
 
 pass

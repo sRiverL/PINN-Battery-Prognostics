@@ -11,8 +11,8 @@ plt.rcParams['ytick.labelsize'] = 8
 plt.rcParams['axes.labelsize'] = 8
 figsize_single = (3.5, 3.5 * 0.618)
 
-data = func.SeversonBattery('..\\SeversonBattery.mat', seq_len=1)
-results_SoH_CaseA_Baseline = torch.load('..\Results\\4 Presentation\SoH Estimation\SoH_CaseA_Baseline.pth')
+data = func.SeversonBattery('../SeversonBattery.mat', seq_len=1)
+results_SoH_CaseA_Baseline = torch.load('../Results/4 Presentation/SoH Estimation/SoH_CaseA_Baseline.pth')
 inputs_dict, targets_dict = func.create_chosen_cells(
     data,
     idx_cells_train=[91, 100],
@@ -55,10 +55,10 @@ main_ax.set_xlabel('Monitoring Time (Unit: Cycles)')
 main_ax.set_ylabel('Extracted Features')
 plt.show()
 
-settings_SoH_CaseB = torch.load('Settings\\settings_SoH_CaseB.pth')
+settings_SoH_CaseB = torch.load('Settings/settings_SoH_CaseB.pth')
 num_rounds_SoH_CaseB = settings_SoH_CaseB['num_rounds']
 num_epoch_SoH_CaseB = settings_SoH_CaseB['num_epoch']
-weights_SoH_CaseB_DeepHPM_AdpBal = torch.load('..\Results\\3 Adaptive Balancing\\weights_rounds_SoH_CaseB_DeepHPM_AdpBal.pth')
+weights_SoH_CaseB_DeepHPM_AdpBal = torch.load('../Results/3 Adaptive Balancing/weights_rounds_SoH_CaseB_DeepHPM_AdpBal.pth')
 
 num_row = 2
 num_col = 3
@@ -96,11 +96,11 @@ fig.text(0, 0.25, 'Relative weight coefficients (Unit: 1)', ha='left', va='basel
 fig.tight_layout()
 plt.show()
 
-results_SoH_CaseA_Baseline = torch.load('..\Results\\4 Presentation\SoH Estimation\SoH_CaseA_Baseline.pth')
-results_SoH_CaseA_Verhulst_Sum = torch.load('..\Results\\4 Presentation\SoH Estimation\SoH_CaseA_Verhulst_Sum.pth')
-results_SoH_CaseA_Verhulst_AdpBal = torch.load('..\Results\\4 Presentation\SoH Estimation\SoH_CaseA_Verhulst_AdpBal.pth')
-results_SoH_CaseA_DeepHPM_Sum = torch.load('..\Results\\4 Presentation\SoH Estimation\SoH_CaseA_DeepHPM_Sum.pth')
-results_SoH_CaseA_DeepHPM_AdpBal = torch.load('..\Results\\4 Presentation\SoH Estimation\SoH_CaseA_DeepHPM_AdpBal.pth')
+results_SoH_CaseA_Baseline = torch.load('../Results/4 Presentation/SoH Estimation/SoH_CaseA_Baseline.pth')
+results_SoH_CaseA_Verhulst_Sum = torch.load('../Results/4 Presentation/SoH Estimation/SoH_CaseA_Verhulst_Sum.pth')
+results_SoH_CaseA_Verhulst_AdpBal = torch.load('../Results/4 Presentation/SoH Estimation/SoH_CaseA_Verhulst_AdpBal.pth')
+results_SoH_CaseA_DeepHPM_Sum = torch.load('../Results/4 Presentation/SoH Estimation/SoH_CaseA_DeepHPM_Sum.pth')
+results_SoH_CaseA_DeepHPM_AdpBal = torch.load('../Results/4 Presentation/SoH Estimation/SoH_CaseA_DeepHPM_AdpBal.pth')
 
 plt.figure(figsize=figsize_single)
 plt.plot(
@@ -160,11 +160,11 @@ plt.xlabel('Monitoring Time (Unit: Cycles)')
 plt.ylabel('State of Health (Unit: 1)')
 plt.show()
 
-results_SoH_CaseB_Baseline = torch.load('..\Results\\4 Presentation\SoH Estimation\SoH_CaseB_Baseline.pth')
-results_SoH_CaseB_Verhulst_Sum = torch.load('..\Results\\4 Presentation\SoH Estimation\SoH_CaseB_Verhulst_Sum.pth')
-results_SoH_CaseB_Verhulst_AdpBal = torch.load('..\Results\\4 Presentation\SoH Estimation\SoH_CaseB_Verhulst_AdpBal.pth')
-results_SoH_CaseB_DeepHPM_Sum = torch.load('..\Results\\4 Presentation\SoH Estimation\SoH_CaseB_DeepHPM_Sum.pth')
-results_SoH_CaseB_DeepHPM_AdpBal = torch.load('..\Results\\4 Presentation\SoH Estimation\SoH_CaseB_DeepHPM_AdpBal.pth')
+results_SoH_CaseB_Baseline = torch.load('../Results/4 Presentation/SoH Estimation/SoH_CaseB_Baseline.pth')
+results_SoH_CaseB_Verhulst_Sum = torch.load('../Results/4 Presentation/SoH Estimation/SoH_CaseB_Verhulst_Sum.pth')
+results_SoH_CaseB_Verhulst_AdpBal = torch.load('../Results/4 Presentation/SoH Estimation/SoH_CaseB_Verhulst_AdpBal.pth')
+results_SoH_CaseB_DeepHPM_Sum = torch.load('../Results/4 Presentation/SoH Estimation/SoH_CaseB_DeepHPM_Sum.pth')
+results_SoH_CaseB_DeepHPM_AdpBal = torch.load('../Results/4 Presentation/SoH Estimation/SoH_CaseB_DeepHPM_AdpBal.pth')
 
 plt.figure(figsize=figsize_single)
 plt.plot(
@@ -224,9 +224,9 @@ plt.xlabel('Monitoring Time (Unit: Cycles)')
 plt.ylabel('State of Health (Unit: 1)')
 plt.show()
 
-results_RUL_CaseA_Baseline = torch.load('..\Results\\4 Presentation\RUL Prognostics\RUL_CaseA_Baseline.pth')
-results_RUL_CaseA_DeepHPM_Sum = torch.load('..\Results\\4 Presentation\RUL Prognostics\RUL_CaseA_DeepHPM_Sum.pth')
-results_RUL_CaseA_DeepHPM_AdpBal = torch.load('..\Results\\4 Presentation\RUL Prognostics\RUL_CaseA_DeepHPM_AdpBal.pth')
+results_RUL_CaseA_Baseline = torch.load('../Results/4 Presentation/RUL Prognostics/RUL_CaseA_Baseline.pth')
+results_RUL_CaseA_DeepHPM_Sum = torch.load('../Results/4 Presentation/RUL Prognostics/RUL_CaseA_DeepHPM_Sum.pth')
+results_RUL_CaseA_DeepHPM_AdpBal = torch.load('../Results/4 Presentation/RUL Prognostics/RUL_CaseA_DeepHPM_AdpBal.pth')
 
 plt.figure(figsize=figsize_single)
 plt.plot(
@@ -269,9 +269,9 @@ plt.xlabel('Monitoring Time (Unit: Cycles)')
 plt.ylabel('Remaining Useful Life (Unit: Cycles)')
 plt.show()
 
-results_RUL_CaseB_Baseline = torch.load('..\Results\\4 Presentation\RUL Prognostics\RUL_CaseB_Baseline.pth')
-results_RUL_CaseB_DeepHPM_Sum = torch.load('..\Results\\4 Presentation\RUL Prognostics\RUL_CaseB_DeepHPM_Sum.pth')
-results_RUL_CaseB_DeepHPM_AdpBal = torch.load('..\Results\\4 Presentation\RUL Prognostics\RUL_CaseB_DeepHPM_AdpBal.pth')
+results_RUL_CaseB_Baseline = torch.load('../Results/4 Presentation/RUL Prognostics/RUL_CaseB_Baseline.pth')
+results_RUL_CaseB_DeepHPM_Sum = torch.load('../Results/4 Presentation/RUL Prognostics/RUL_CaseB_DeepHPM_Sum.pth')
+results_RUL_CaseB_DeepHPM_AdpBal = torch.load('../Results/4 Presentation/RUL Prognostics/RUL_CaseB_DeepHPM_AdpBal.pth')
 
 plt.figure(figsize=figsize_single)
 plt.plot(
@@ -314,9 +314,9 @@ plt.xlabel('Monitoring Time (Unit: Cycles)')
 plt.ylabel('Remaining Useful Life (Unit: Cycles)')
 plt.show()
 
-results_RUL_CaseC_Baseline = torch.load('..\Results\\4 Presentation\RUL Prognostics\RUL_CaseC_Baseline.pth')
-results_RUL_CaseC_DeepHPM_Sum = torch.load('..\Results\\4 Presentation\RUL Prognostics\RUL_CaseC_DeepHPM_Sum.pth')
-results_RUL_CaseC_DeepHPM_AdpBal = torch.load('..\Results\\4 Presentation\RUL Prognostics\RUL_CaseC_DeepHPM_AdpBal.pth')
+results_RUL_CaseC_Baseline = torch.load('../Results/4 Presentation/RUL Prognostics/RUL_CaseC_Baseline.pth')
+results_RUL_CaseC_DeepHPM_Sum = torch.load('../Results/4 Presentation/RUL Prognostics/RUL_CaseC_DeepHPM_Sum.pth')
+results_RUL_CaseC_DeepHPM_AdpBal = torch.load('../Results/4 Presentation/RUL Prognostics/RUL_CaseC_DeepHPM_AdpBal.pth')
 
 plt.figure(figsize=figsize_single)
 results_RUL_CaseC_idx = np.argsort(results_RUL_CaseC_Baseline['U_true'])

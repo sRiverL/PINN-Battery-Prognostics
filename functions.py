@@ -133,7 +133,7 @@ class SeversonBattery:
 
 def create_units(data, t, RUL, num_units, len_units):
     """
-    按照len_units将数据划分为多份，放进data_list和RUL_list
+    按照len_units将数据划分为多份，返回data_list和RUL_list
     """
     data_all = np.hstack((data, t.flatten()[:, None]))
     RUL_all = RUL
@@ -153,11 +153,11 @@ def create_units(data, t, RUL, num_units, len_units):
 
 def create_slices(data_units, RUL_units, seq_len_slices, steps_slices):
     """
-    
+    根据data_units长度、切片长度seq_len_slices、切片步长steps_slices分割序列片段，返回data、RUL切片和切片的长度
     """
     data_slices = []
     RUL_slices = []
-    num_slices = np.zeros(len(data_units), dtype=np.int)
+    num_slices = np.zeros(len(data_units), dtype=int)
     for i in range(len(data_units)):
         num_slices_tmp = int((data_units[i].shape[0] - max(seq_len_slices, steps_slices))
                              / steps_slices) + 1  # 每个unit的slice数量
@@ -178,7 +178,7 @@ def create_slices(data_units, RUL_units, seq_len_slices, steps_slices):
 
 def create_chosen_cells(data, idx_cells_train, idx_cells_test, perc_val):
     """
-    
+    创建train/test/valid数据集
     """
     inputs_train_slices = []
     inputs_val_slices = []
@@ -363,12 +363,12 @@ class DataDrivenNN(nn.Module):
         U = inverse_standardize_tensor(U_norm, mean=self.scaler_targets[0], std=self.scaler_targets[1])
 
         grad_outputs = torch.ones_like(U)
-        U_t = torch.autograd.grad(
-            U, t,
-            grad_outputs=grad_outputs,
-            create_graph=True,
-            retain_graph=True,
-            only_inputs=True
+        U_t = torch.autograd.grad(  # 计算并返回输出相对于输入的梯度之和
+            U, t,  # 输出，输入
+            grad_outputs=grad_outputs,  # 向量雅可比乘积中的“向量”
+            create_graph=True,  # 构造导数图，允许计算高阶导数乘积
+            retain_graph=True,  # 如果False，将释放用于计算grad的计算图
+            only_inputs=True  # only_inputs 参数已弃用，现在被忽略（默认为 True ）。要累积计算图其他部分的梯度，请使用 torch.autograd.backward
         )[0]
 
         F = torch.zeros_like(U)
